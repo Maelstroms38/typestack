@@ -43,7 +43,11 @@ const SQLiteStore = connectSqlite3(session);
       resolvers: [AuthResolver, BookResolver],
       validate: true
     }),
-    context: ({ req, res }) => ({ req, res })
+    context: ({ req, res }) => ({ req, res }),
+    introspection: true,
+    playground: {
+      endpoint: '/graphql'
+    }
   });
 
   apolloServer.applyMiddleware({ app, cors: false });
