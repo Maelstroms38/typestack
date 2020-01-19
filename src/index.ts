@@ -36,7 +36,7 @@ const SQLiteStore = connectSqlite3(session);
   const dbOptions = await getConnectionOptions(
     process.env.NODE_ENV || 'development'
   );
-  await createConnection({ ...dbOptions, name: process.env.NODE_ENV || 'development' });
+  await createConnection({ ...dbOptions, name: 'default' });
 
   const apolloServer = new ApolloServer({
     schema: await buildSchema({
