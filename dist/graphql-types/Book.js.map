@@ -1,0 +1,1 @@
+{"version":3,"file":"Book.js","sourceRoot":"","sources":["../../src/graphql-types/Book.ts"],"names":[],"mappings":";;;;;;;;;;;AAAA,+CAAgD;AAGhD,IAAa,IAAI,GAAjB,MAAa,IAAI;CAMhB,CAAA;AAJC;IADC,oBAAK,CAAC,EAAE,QAAQ,EAAE,IAAI,EAAE,CAAC;;mCACX;AAGf;IADC,oBAAK,CAAC,EAAE,QAAQ,EAAE,IAAI,EAAE,CAAC;;oCACV;AALL,IAAI;IADhB,wBAAS,EAAE;GACC,IAAI,CAMhB;AANY,oBAAI"}
