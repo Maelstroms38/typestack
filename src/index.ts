@@ -1,6 +1,5 @@
 import 'reflect-metadata';
 import { createConnection, getConnectionOptions } from 'typeorm';
-import { createServer } from 'http';
 import express from 'express';
 import session from 'express-session';
 import connectSqlite3 from 'connect-sqlite3';
@@ -8,15 +7,12 @@ import { ApolloServer } from 'apollo-server-express';
 import { buildSchema } from 'type-graphql';
 import { AuthResolver } from './resolvers/AuthResolver';
 import { BookResolver } from './resolvers/BookResolver';
-import cors from 'cors';
-import bodyParser from 'body-parser';
 
 // I like to use redis for this: https://github.com/tj/connect-redis
 const SQLiteStore = connectSqlite3(session);
 
 (async () => {
   const app = express();
-  const server = createServer(app);
 
   app.use(
     session({
@@ -38,7 +34,7 @@ const SQLiteStore = connectSqlite3(session);
 
   // get options from ormconfig.js
   const dbOptions = await getConnectionOptions(
-    process.env.NODE_ENV || 'development'
+    process.env.NODE_ENV || 'default'
   );
   await createConnection({ ...dbOptions, name: 'default' });
 
@@ -50,12 +46,9 @@ const SQLiteStore = connectSqlite3(session);
     context: ({ req, res }) => ({ req, res })
   });
 
-  apolloServer.applyMiddleware({ app });
-  app.use(bodyParser.urlencoded({ extended: true }));
-  app.use(bodyParser.json());
-  app.use(cors());
+  apolloServer.applyMiddleware({ app, cors: false });
   const port = process.env.PORT || 4000;
-  server.listen({port}, () => {
+  app.listen(port, () => {
     console.log(`server started at http://localhost:${port}/graphql`);
   });
 })();
