@@ -7,4 +7,7 @@ export class PlaceInput {
 
   @Field({ nullable: true })
   description?: string;
+
+  @Field({ nullable: true })
+  imageUrl?: string;
 }

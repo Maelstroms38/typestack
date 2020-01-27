@@ -19,6 +19,13 @@ export class Place extends BaseEntity {
   @Column()
   description?: string;
 
+  @Field({
+    nullable: true,
+    description: 'The place image url'
+  })
+  @Column()
+  imageUrl?: string;
+
   @Field()
   @Column()
   creationDate: Date;

@@ -24,6 +24,7 @@ export class PlaceResolver {
     const place = plainToClass(Place, {
       description: placeInput.description,
       title: placeInput.title,
+      imageUrl: placeInput.imageUrl,
       creationDate: new Date()
     });
     await Place.create({ ...place }).save();

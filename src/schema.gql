@@ -19,12 +19,16 @@ type Place {
 
   """The place description with localized info"""
   description: String
+
+  """The place image url"""
+  imageUrl: String
   creationDate: DateTime!
 }
 
 input PlaceInput {
   title: String!
   description: String
+  imageUrl: String
 }
 
 type Query {
