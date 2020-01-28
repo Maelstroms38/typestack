@@ -20,14 +20,14 @@ export class PlaceResolver {
   }
 
   @Mutation(() => Place)
-  async addPlace(@Arg('place') placeInput: PlaceInput): Promise<Place> {
+  async createPlace(@Arg('place') placeInput: PlaceInput): Promise<Place> {
     const place = plainToClass(Place, {
       description: placeInput.description,
       title: placeInput.title,
       imageUrl: placeInput.imageUrl,
       creationDate: new Date()
     });
-    await Place.create({ ...place }).save();
-    return place;
+    const newPlace = await Place.create({ ...place }).save();
+    return newPlace;
   }
 }
