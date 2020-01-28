@@ -57,8 +57,14 @@ export class AuthResolver {
       password: hashedPassword
     }).save();
 
+    const payload = {
+      id: user.id,
+      username: user.username,
+      email: user.email
+    };
+
     const token = jwt.sign(
-      user,
+      payload,
       process.env.SESSION_SECRET || 'aslkdfjoiq12312'
     );
 
@@ -85,10 +91,16 @@ export class AuthResolver {
         return invalidLoginResponse;
       }
 
+      const payload = {
+        id: user.id,
+        username: user.username,
+        email: user.email
+      };
+
       ctx.req.session!.userId = user.id;
 
       const token = jwt.sign(
-        user,
+        payload,
         process.env.SESSION_SECRET || 'aslkdfjoiq12312'
       );
 

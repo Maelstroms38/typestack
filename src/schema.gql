@@ -3,13 +3,26 @@
 # !!!   DO NOT MODIFY THIS FILE BY YOURSELF   !!!
 # -----------------------------------------------
 
+input AuthInput {
+  email: String
+  username: String
+  password: String!
+}
+
 """
 The javascript `Date` as string. Type represents date and time as the ISO Date string.
 """
 scalar DateTime
 
+type FieldError {
+  path: String!
+  message: String!
+}
+
 type Mutation {
   createPlace(place: PlaceInput!): Place!
+  register(input: AuthInput!): UserResponse!
+  login(input: AuthInput!): UserResponse!
 }
 
 """Destination or place of interest"""
@@ -42,4 +55,10 @@ type User {
   id: Float!
   email: String!
   username: String!
+}
+
+type UserResponse {
+  user: User
+  token: String
+  errors: [FieldError!]
 }
