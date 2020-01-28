@@ -9,7 +9,7 @@ The javascript `Date` as string. Type represents date and time as the ISO Date s
 scalar DateTime
 
 type Mutation {
-  addPlace(place: PlaceInput!): Place!
+  createPlace(place: PlaceInput!): Place!
 }
 
 """Destination or place of interest"""
@@ -36,4 +36,10 @@ type Query {
 
   """Get all the places from around the world """
   places: [Place!]!
+}
+
+type User {
+  id: Float!
+  email: String!
+  username: String!
 }
