@@ -10,4 +10,7 @@ export class PlaceInput {
 
   @Field({ nullable: true })
   imageUrl?: string;
+
+  @Field()
+  userId: number;
 }

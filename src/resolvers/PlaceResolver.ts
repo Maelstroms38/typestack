@@ -2,6 +2,7 @@ import { Resolver, Query, Arg, Mutation } from 'type-graphql';
 import { plainToClass } from 'class-transformer';
 
 import { Place } from '../entity/Place';
+import { User } from '../entity/User';
 import { PlaceInput } from '../graphql-types/PlaceInput';
 
 @Resolver(() => Place)
@@ -21,10 +22,12 @@ export class PlaceResolver {
 
   @Mutation(() => Place)
   async createPlace(@Arg('place') placeInput: PlaceInput): Promise<Place> {
+    const user = await User.findOne(placeInput.userId);
     const place = plainToClass(Place, {
       description: placeInput.description,
       title: placeInput.title,
       imageUrl: placeInput.imageUrl,
+      user: user,
       creationDate: new Date()
     });
     const newPlace = await Place.create({ ...place }).save();

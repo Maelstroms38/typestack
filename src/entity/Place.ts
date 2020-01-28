@@ -1,5 +1,12 @@
-import { Entity, BaseEntity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import {
+  Entity,
+  BaseEntity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne
+} from 'typeorm';
 import { ObjectType, Field, ID } from 'type-graphql';
+import { User } from './User';
 
 @ObjectType({ description: 'Destination or place of interest' })
 @Entity()
@@ -29,4 +36,11 @@ export class Place extends BaseEntity {
   @Field()
   @Column()
   creationDate: Date;
+
+  @Field(() => User)
+  @ManyToOne(
+    () => User,
+    user => user.places
+  )
+  user: User;
 }

@@ -1,5 +1,13 @@
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  BaseEntity,
+  OneToMany,
+  JoinTable
+} from 'typeorm';
 import { Field, ObjectType } from 'type-graphql';
+import { Place } from './Place';
 
 @ObjectType()
 @Entity()
@@ -18,4 +26,15 @@ export class User extends BaseEntity {
 
   @Column()
   password: string;
+
+  @Field(() => [Place])
+  @OneToMany(
+    () => Place,
+    places => places.user,
+    {
+      eager: true
+    }
+  )
+  @JoinTable()
+  places: Place[];
 }

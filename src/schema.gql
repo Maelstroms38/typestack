@@ -36,12 +36,14 @@ type Place {
   """The place image url"""
   imageUrl: String
   creationDate: DateTime!
+  user: User!
 }
 
 input PlaceInput {
   title: String!
   description: String
   imageUrl: String
+  userId: Float!
 }
 
 type Query {
@@ -55,6 +57,7 @@ type User {
   id: Float!
   email: String!
   username: String!
+  places: [Place!]!
 }
 
 type UserResponse {
