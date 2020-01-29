@@ -3,8 +3,7 @@ import {
   PrimaryGeneratedColumn,
   Column,
   BaseEntity,
-  OneToMany,
-  JoinTable
+  OneToMany
 } from 'typeorm';
 import { Field, ObjectType } from 'type-graphql';
 import { Place } from './Place';
@@ -35,6 +34,5 @@ export class User extends BaseEntity {
       eager: true
     }
   )
-  @JoinTable()
   places: Place[];
 }

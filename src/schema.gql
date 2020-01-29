@@ -21,6 +21,8 @@ type FieldError {
 
 type Mutation {
   createPlace(place: PlaceInput!): Place!
+  updatePlace(place: PlaceInput!): Place!
+  deletePlace(id: Float!): String!
   register(input: AuthInput!): UserResponse!
   login(input: AuthInput!): UserResponse!
 }
@@ -40,10 +42,10 @@ type Place {
 }
 
 input PlaceInput {
+  id: Float
   title: String!
   description: String
   imageUrl: String
-  userId: Float!
 }
 
 type Query {
