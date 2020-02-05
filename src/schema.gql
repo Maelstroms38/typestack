@@ -53,6 +53,7 @@ type Query {
 
   """Get all the places from around the world """
   places: [Place!]!
+  currentUser: User!
 }
 
 type User {

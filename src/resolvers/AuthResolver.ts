@@ -1,10 +1,11 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import { Arg, Ctx, Mutation, Resolver } from 'type-graphql';
+import { Arg, Ctx, Mutation, Resolver, Query } from 'type-graphql';
 import { User } from '../entity/User';
 import { AuthInput } from '../graphql-types/AuthInput';
 import { UserResponse } from '../graphql-types/UserResponse';
 import { Request, Response } from 'express';
+import { getUserId } from '../utils';
 
 const invalidLoginResponse = {
   errors: [
@@ -107,5 +108,17 @@ export class AuthResolver {
       return { user, token };
     }
     return invalidLoginResponse;
+  }
+
+  @Query(() => User)
+  async currentUser(
+    @Ctx() ctx: { req: Request; res: Response }
+  ): Promise<User | undefined> {
+    const userId = getUserId(ctx);
+    if (userId) {
+      const user = await User.findOne(userId);
+      return user;
+    }
+    throw new Error('User not found');
   }
 }
