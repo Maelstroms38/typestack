@@ -38,7 +38,7 @@ type Place {
   """The place image url"""
   imageUrl: String
   creationDate: DateTime!
-  user: User!
+  user: User
 }
 
 input PlaceInput {

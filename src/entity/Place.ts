@@ -37,10 +37,10 @@ export class Place extends BaseEntity {
   @Column()
   creationDate: Date;
 
-  @Field(() => User)
+  @Field({ nullable: true })
   @ManyToOne(
     () => User,
     user => user.places
   )
-  user: User;
+  user?: User;
 }
