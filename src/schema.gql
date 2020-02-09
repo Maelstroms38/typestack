@@ -56,6 +56,11 @@ type Query {
   currentUser: User!
 }
 
+type Subscription {
+  placeAddedEdited: Place!
+  placeDeleted: Float!
+}
+
 type User {
   id: Float!
   email: String!

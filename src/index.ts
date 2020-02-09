@@ -6,9 +6,10 @@ import connectSqlite3 from 'connect-sqlite3';
 import { ApolloServer } from 'apollo-server-express';
 import * as path from 'path';
 import { buildSchema } from 'type-graphql';
-
+import { RedisPubSub } from 'graphql-redis-subscriptions';
 import { PlaceResolver } from './resolvers/PlaceResolver';
 import { AuthResolver } from './resolvers/AuthResolver';
+import http from 'http';
 
 const SQLiteStore = connectSqlite3(session);
 
@@ -47,7 +48,8 @@ async function bootstrap() {
         resolvers: [PlaceResolver, AuthResolver],
         validate: true,
         // automatically create `schema.gql` file with schema definition in current folder
-        emitSchemaFile: path.resolve(__dirname, 'schema.gql')
+        emitSchemaFile: path.resolve(__dirname, 'schema.gql'),
+        pubSub: new RedisPubSub()
       });
 
       // Create GraphQL server
@@ -62,9 +64,17 @@ async function bootstrap() {
       apolloServer.applyMiddleware({ app, cors: true });
 
       const port = process.env.PORT || 4000;
+
+      const httpServer = http.createServer(app);
+      apolloServer.installSubscriptionHandlers(httpServer);
       // Start the server
-      app.listen(port, () => {
-        console.log(`Server started at http://localhost:${port}/graphql`);
+      httpServer.listen(port, () => {
+        console.log(
+          `🚀 Server ready at http://localhost:${port}${apolloServer.graphqlPath}`
+        );
+        console.log(
+          `🚀 Subscriptions ready at ws://localhost:${port}${apolloServer.subscriptionsPath}`
+        );
       });
     })
     .catch(error => console.log(error));
