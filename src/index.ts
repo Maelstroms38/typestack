@@ -59,7 +59,10 @@ async function bootstrap() {
         context: ({ req, res }) => ({ req, res }),
         introspection: true,
         // enable GraphQL Playground
-        playground: true
+        playground: true,
+        subscriptions: {
+          keepAlive: 1000
+        }
       });
 
       apolloServer.applyMiddleware({ app, cors: true });
