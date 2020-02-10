@@ -5,11 +5,11 @@ import session from 'express-session';
 import { ApolloServer } from 'apollo-server-express';
 import * as path from 'path';
 import { buildSchema } from 'type-graphql';
-import Redis from 'ioredis';
+import { RedisClient } from 'redis';
 import connectRedis from 'connect-redis';
 import { PlaceResolver } from './resolvers/PlaceResolver';
 import { AuthResolver } from './resolvers/AuthResolver';
-import { pubSub } from './redis';
+import { pubSub, redis } from './redis';
 import http from 'http';
 
 const RedisStore = connectRedis(session);
@@ -20,7 +20,7 @@ async function bootstrap() {
   app.use(
     session({
       store: new RedisStore({
-        client: new Redis({ keepAlive: 10000 })
+        client: (redis as unknown) as RedisClient
       }),
       name: 'qid',
       secret: process.env.SESSION_SECRET || 'aslkdfjoiq12312',
