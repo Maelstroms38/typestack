@@ -5,22 +5,22 @@ import session from 'express-session';
 import { ApolloServer } from 'apollo-server-express';
 import * as path from 'path';
 import { buildSchema } from 'type-graphql';
-import { RedisClient } from 'redis';
-import connectRedis from 'connect-redis';
+import connectSqlite3 from 'connect-sqlite3';
 import { PlaceResolver } from './resolvers/PlaceResolver';
 import { AuthResolver } from './resolvers/AuthResolver';
-import { pubSub, redis } from './redis';
+import pubSub from './pubSub';
 import http from 'http';
 
-const RedisStore = connectRedis(session);
+const SQLiteStore = connectSqlite3(session);
 
 async function bootstrap() {
   const app = express();
   // use express session
   app.use(
     session({
-      store: new RedisStore({
-        client: (redis as unknown) as RedisClient
+      store: new SQLiteStore({
+        db: 'database.sqlite',
+        concurrentDB: true
       }),
       name: 'qid',
       secret: process.env.SESSION_SECRET || 'aslkdfjoiq12312',
@@ -56,7 +56,7 @@ async function bootstrap() {
       // Create GraphQL server
       const apolloServer = new ApolloServer({
         schema,
-        context: ({ req, res }) => ({ req, res, pubSub }),
+        context: ({ req, res }) => ({ req, res }),
         introspection: true,
         // enable GraphQL Playground
         playground: true,
