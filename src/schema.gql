@@ -57,8 +57,7 @@ type Query {
 }
 
 type Subscription {
-  placeAddedEdited: Place!
-  placeDeleted: Float!
+  newPlaceAdded: Place!
 }
 
 type User {

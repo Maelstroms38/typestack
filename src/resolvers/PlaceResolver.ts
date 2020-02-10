@@ -6,16 +6,20 @@ import {
   Ctx,
   PubSub,
   Subscription,
-  Root
+  Root,
+  Publisher
 } from 'type-graphql';
 import { plainToClass } from 'class-transformer';
-import { PubSubEngine } from 'graphql-subscriptions';
 
 import { Place } from '../entity/Place';
 import { User } from '../entity/User';
 import { PlaceInput } from '../graphql-types/PlaceInput';
 import { getUserId } from '../utils';
 import { Request } from 'express';
+
+enum Topic {
+  PlaceAdded = 'NEW_PLACE_ADDED'
+}
 
 @Resolver(() => Place)
 export class PlaceResolver {
@@ -37,7 +41,7 @@ export class PlaceResolver {
   async createPlace(
     @Arg('place') placeInput: PlaceInput,
     @Ctx() ctx: { req: Request },
-    @PubSub() pubSub: PubSubEngine
+    @PubSub(Topic.PlaceAdded) publish: Publisher<Place>
   ): Promise<Place> {
     const userId = getUserId(ctx);
     if (userId) {
@@ -53,7 +57,7 @@ export class PlaceResolver {
           ...place,
           user
         }).save();
-        await pubSub.publish('placeAdded', newPlace);
+        await publish(newPlace);
         return newPlace;
       }
       throw new Error('User not found');
@@ -64,8 +68,7 @@ export class PlaceResolver {
   @Mutation(() => Place)
   async updatePlace(
     @Arg('place') placeInput: PlaceInput,
-    @Ctx() ctx: { req: Request },
-    @PubSub() pubSub: PubSubEngine
+    @Ctx() ctx: { req: Request }
   ): Promise<Place> {
     const userId = getUserId(ctx);
     if (userId) {
@@ -79,7 +82,6 @@ export class PlaceResolver {
         place.description = description;
         place.imageUrl = imageUrl;
         place.save();
-        await pubSub.publish('placeEdited', place);
         return place;
       }
       throw new Error('Place not found');
@@ -89,26 +91,22 @@ export class PlaceResolver {
   @Mutation(() => String)
   async deletePlace(
     @Arg('id') id: number,
-    @Ctx() ctx: { req: Request },
-    @PubSub() pubSub: PubSubEngine
+    @Ctx() ctx: { req: Request }
   ): Promise<Number | undefined> {
     const userId = getUserId(ctx);
     if (userId) {
       const deleted = await Place.delete({ id, user: { id: userId } });
       if (deleted) {
-        await pubSub.publish('placeDeleted', id);
         return id;
       }
       throw new Error('Place not deleted');
     }
     throw new Error('User not found');
   }
-  @Subscription({ topics: ['placeAdded', 'placeEdited'] })
-  placeAddedEdited(@Root() place: Place): Place {
+  @Subscription(() => Place, {
+    topics: Topic.PlaceAdded
+  })
+  newPlaceAdded(@Root() place: Place): Place {
     return place;
-  }
-  @Subscription({ topics: 'placeDeleted' })
-  placeDeleted(@Root() id: Number): Number {
-    return id;
   }
 }
