@@ -2,26 +2,25 @@ import 'reflect-metadata';
 import { createConnection, getConnectionOptions } from 'typeorm';
 import express from 'express';
 import session from 'express-session';
-import connectSqlite3 from 'connect-sqlite3';
 import { ApolloServer } from 'apollo-server-express';
 import * as path from 'path';
 import { buildSchema } from 'type-graphql';
 import Redis from 'ioredis';
-import { RedisPubSub } from 'graphql-redis-subscriptions';
+import connectRedis from 'connect-redis';
 import { PlaceResolver } from './resolvers/PlaceResolver';
 import { AuthResolver } from './resolvers/AuthResolver';
+import { pubSub } from './redis';
 import http from 'http';
 
-const SQLiteStore = connectSqlite3(session);
+const RedisStore = connectRedis(session);
 
 async function bootstrap() {
   const app = express();
   // use express session
   app.use(
     session({
-      store: new SQLiteStore({
-        db: 'database.sqlite',
-        concurrentDB: true
+      store: new RedisStore({
+        client: new Redis({ keepAlive: 10000 })
       }),
       name: 'qid',
       secret: process.env.SESSION_SECRET || 'aslkdfjoiq12312',
@@ -39,16 +38,7 @@ async function bootstrap() {
   const dbOptions = await getConnectionOptions(
     process.env.NODE_ENV || 'development'
   );
-  // configure Redis connection options
-  const options: Redis.RedisOptions = {
-    keepAlive: 10000,
-    retryStrategy: times => Math.max(times * 100, 3000)
-  };
-  // create Redis-based pub-sub
-  const pubSub = new RedisPubSub({
-    publisher: new Redis(options),
-    subscriber: new Redis(options)
-  });
+
   createConnection({ ...dbOptions, name: 'default' })
     .then(async () => {
       /* Initialize apollo server here */
