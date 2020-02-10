@@ -6,6 +6,7 @@ import connectSqlite3 from 'connect-sqlite3';
 import { ApolloServer } from 'apollo-server-express';
 import * as path from 'path';
 import { buildSchema } from 'type-graphql';
+import Redis from 'ioredis';
 import { RedisPubSub } from 'graphql-redis-subscriptions';
 import { PlaceResolver } from './resolvers/PlaceResolver';
 import { AuthResolver } from './resolvers/AuthResolver';
@@ -38,6 +39,15 @@ async function bootstrap() {
   const dbOptions = await getConnectionOptions(
     process.env.NODE_ENV || 'development'
   );
+  // configure Redis connection options
+  const options: Redis.RedisOptions = {
+    retryStrategy: times => Math.max(times * 100, 3000)
+  };
+  // create Redis-based pub-sub
+  const pubSub = new RedisPubSub({
+    publisher: new Redis(options),
+    subscriber: new Redis(options)
+  });
   createConnection({ ...dbOptions, name: 'default' })
     .then(async () => {
       /* Initialize apollo server here */
@@ -49,7 +59,7 @@ async function bootstrap() {
         validate: true,
         // automatically create `schema.gql` file with schema definition in current folder
         emitSchemaFile: path.resolve(__dirname, 'schema.gql'),
-        pubSub: new RedisPubSub()
+        pubSub
       });
 
       // Create GraphQL server
