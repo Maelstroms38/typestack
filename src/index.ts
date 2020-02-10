@@ -41,6 +41,7 @@ async function bootstrap() {
   );
   // configure Redis connection options
   const options: Redis.RedisOptions = {
+    keepAlive: 10000,
     retryStrategy: times => Math.max(times * 100, 3000)
   };
   // create Redis-based pub-sub
