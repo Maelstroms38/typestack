@@ -56,7 +56,7 @@ async function bootstrap() {
       // Create GraphQL server
       const apolloServer = new ApolloServer({
         schema,
-        context: ({ req, res }) => ({ req, res }),
+        context: ({ req, res }) => ({ req, res, pubSub }),
         introspection: true,
         // enable GraphQL Playground
         playground: true,
