@@ -33,9 +33,9 @@ export class Place extends BaseEntity {
   @Column()
   imageUrl?: string;
 
-  @Field()
+  @Field({ nullable: true })
   @Column()
-  creationDate: Date;
+  creationDate?: Date;
 
   @Field({ nullable: true })
   @ManyToOne(

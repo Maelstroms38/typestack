@@ -37,7 +37,7 @@ type Place {
 
   """The place image url"""
   imageUrl: String
-  creationDate: DateTime!
+  creationDate: DateTime
   user: User
 }
 
